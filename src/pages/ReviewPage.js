@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { Logo } from "../components/CommonComponents";
 import SearchComponents from "../components/SearchComponents";
-import ReviewCard from "./review/ReviewCard";
+import ReviewComponents from "./review/ReviewComponents";
 import ReviewModal from "./review/ReviewModal";
 import WriteModal from "./review/WriteModal";
 import EditModal from "./review/EditModal";
@@ -232,7 +232,7 @@ const ReviewPage = () => {
         <div style={reviewStyles.reviewContainer}>
           {(filteredReviews.length > 0 ? filteredReviews : reviews).map(
             (review) => (
-              <ReviewCard
+              <ReviewComponents
                 key={review.postId}
                 review={review}
                 onReviewClick={openReviewModal}

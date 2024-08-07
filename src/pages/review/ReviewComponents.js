@@ -2,7 +2,7 @@ import React from "react";
 import { reviewStyles } from "../../styles/reviewStyles";
 import LikeButton from "../../components/LikeButtonComponents";
 
-const ReviewCard = ({ review, onReviewClick, onLikeToggle }) => {
+const ReviewComponents = ({ review, onReviewClick, onLikeToggle }) => {
   const { firstImageUrl, hashtags, title, postId, likes } = review;
 
   const handleClick = () => {
@@ -38,4 +38,4 @@ const ReviewCard = ({ review, onReviewClick, onLikeToggle }) => {
   );
 };
 
-export default ReviewCard;
+export default ReviewComponents;

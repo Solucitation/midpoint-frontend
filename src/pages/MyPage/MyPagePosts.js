@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import ReviewCard from "../review/ReviewCard";
+import ReviewComponents from "../review/ReviewComponents";
 import ReviewModal from "../review/ReviewModal";
 import WriteModal from "../review/WriteModal";
 import EditModal from "../review/EditModal";
@@ -272,7 +272,7 @@ const MyPagePosts = () => {
           <div></div>
         ) : reviews.length > 0 ? (
           reviews.map((review) => (
-            <ReviewCard
+            <ReviewComponents
               key={review.postId}
               review={review}
               onReviewClick={openReviewModal}
