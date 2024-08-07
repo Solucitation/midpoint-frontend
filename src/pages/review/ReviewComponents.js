@@ -3,7 +3,7 @@ import { reviewStyles } from "../../styles/reviewStyles";
 import LikeButton from "../../components/LikeButtonComponents";
 
 const ReviewComponents = ({ review, onReviewClick, onLikeToggle }) => {
-  const { firstImageUrl, hashtags, title, postId, likes } = review;
+  const { firstImageUrl, hashtags = [], title, postId, likes } = review;
 
   const handleClick = () => {
     onReviewClick(postId);

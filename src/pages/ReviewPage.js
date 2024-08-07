@@ -90,19 +90,43 @@ const ReviewPage = () => {
     }
   };
 
+  const fetchSingleReview = async (postId) => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      const headers = accessToken
+        ? { Authorization: `Bearer ${accessToken}` }
+        : {};
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/posts/${postId}`,
+        { headers }
+      );
+
+      if (response.data) {
+        return {
+          postId: response.data.postId,
+          likes: response.data.likes,
+        };
+      } else {
+        throw new Error("Invalid response data");
+      }
+    } catch (error) {
+      console.error("해당 게시글 조회 중 오류가 발생하였습니다.", error);
+      throw error;
+    }
+  };
+
   useEffect(() => {
     fetchReviews();
   }, []);
 
-  const handleLikeToggle = async (postId, currentLikes, currentLikeCnt) => {
-    // UI 즉시 업데이트
-    setReviews((prevReviews) =>
+  const handleLikeToggle = async (postId, currentLikes) => {
+    setFilteredReviews((prevReviews) =>
       prevReviews.map((review) =>
         review.postId === postId
           ? {
               ...review,
               likes: !currentLikes,
-              likeCnt: currentLikes ? currentLikeCnt - 1 : currentLikeCnt + 1,
+              likeCnt: currentLikes ? review.likeCnt - 1 : review.likeCnt + 1,
             }
           : review
       )
@@ -123,20 +147,49 @@ const ReviewPage = () => {
       );
 
       if (response.status === 200) {
-        await fetchReviews();
+        const updatedReview = await fetchSingleReview(postId);
+
+        setFilteredReviews((prevReviews) =>
+          prevReviews.map((review) =>
+            review.postId === postId
+              ? { ...review, likes: updatedReview.likes }
+              : review
+          )
+        );
+
+        setReviews((prevReviews) =>
+          prevReviews.map((review) =>
+            review.postId === postId
+              ? { ...review, likes: updatedReview.likes }
+              : review
+          )
+        );
       } else {
         throw new Error("Failed to toggle like");
       }
     } catch (error) {
       console.error("Error toggling like", error);
       alert("좋아요를 변경하는 중 오류가 발생하였습니다.");
+      // 좋아요 토글 실패 시 UI를 이전 상태로 복원
+      setFilteredReviews((prevReviews) =>
+        prevReviews.map((review) =>
+          review.postId === postId
+            ? {
+                ...review,
+                likes: currentLikes,
+                likeCnt: currentLikes ? review.likeCnt + 1 : review.likeCnt - 1,
+              }
+            : review
+        )
+      );
+
       setReviews((prevReviews) =>
         prevReviews.map((review) =>
           review.postId === postId
             ? {
                 ...review,
                 likes: currentLikes,
-                likeCnt: currentLikes ? currentLikeCnt + 1 : currentLikeCnt - 1,
+                likeCnt: currentLikes ? review.likeCnt + 1 : review.likeCnt - 1,
               }
             : review
         )

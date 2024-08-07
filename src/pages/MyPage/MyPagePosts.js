@@ -207,6 +207,31 @@ const MyPagePosts = () => {
     [setError]
   );
 
+  const fetchSingleReview = async (postId) => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      const headers = accessToken
+        ? { Authorization: `Bearer ${accessToken}` }
+        : {};
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/posts/${postId}`,
+        { headers }
+      );
+
+      if (response.data) {
+        return {
+          postId: response.data.postId,
+          likes: response.data.likes,
+        };
+      } else {
+        throw new Error("Invalid response data");
+      }
+    } catch (error) {
+      console.error("해당 게시글 조회 중 오류가 발생하였습니다.", error);
+      throw error;
+    }
+  };
+
   const handleLikeToggle = async (postId) => {
     try {
       const accessToken = localStorage.getItem("accessToken");
@@ -223,7 +248,15 @@ const MyPagePosts = () => {
       );
 
       if (response.status === 200) {
-        await fetchReviewsMine();
+        const updatedReview = await fetchSingleReview(postId);
+
+        setReviews((prevReviews) =>
+          prevReviews.map((review) =>
+            review.postId === postId
+              ? { ...review, likes: updatedReview.likes }
+              : review
+          )
+        );
       } else {
         throw new Error("Failed to toggle like");
       }
